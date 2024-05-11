@@ -22,13 +22,10 @@ class TypeClothesSerializer(serializers.ModelSerializer):
 
 
 class ClothesSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
 
     class Meta:
         model = Clothes
         fields = "__all__"
-
-    def prepare_user(self):
-        if user := self.context['request'].user:
-            self.initial_data['user'] = user.id
-            return True
-        return False
