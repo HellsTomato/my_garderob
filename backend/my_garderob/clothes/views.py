@@ -1,3 +1,6 @@
+import base64
+
+from django.core.files import File
 from rest_framework.generics import ListAPIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
@@ -59,3 +62,12 @@ class ClothesViewSet(ModelViewSet):
             for type_name in TypeClothes.objects.all().values_list('name', flat=True)
         }
         return Response(levels_counts, status=status.HTTP_200_OK)
+
+    @action(methods=["GET"], detail=True, url_path="image-base64")
+    def image_base64(self, request, *args, **kwargs):
+        # Вовзращает файл в фолмате base64
+        obj = self.get_object()
+        with open(obj.image.path, 'rb') as f:
+            image = File(f)
+            data = base64.b64encode(image.read())
+        return Response(data, status=status.HTTP_200_OK)
