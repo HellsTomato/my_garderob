@@ -5,8 +5,11 @@ from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from .serializers import UserSerializer
 from django.contrib.auth.models import User
+from rest_framework.decorators import authentication_classes, permission_classes
 
 
+@authentication_classes([])
+@permission_classes([])
 class RegisterAPIView(APIView):
     """
     Апи для регистрации. Возвращает логин и созданный токен
