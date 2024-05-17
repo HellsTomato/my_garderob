@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:my_garderob/pages/camera_page.dart';
-import 'package:my_garderob/pages/photo_page.dart';
+import 'package:my_garderob/pages/create_photo/camera_page.dart';
+import 'package:my_garderob/pages/create_photo/photo_page.dart';
 import 'package:my_garderob/resources/image_clother.dart';
 
 // class IconWidget extends StatelessWidget {

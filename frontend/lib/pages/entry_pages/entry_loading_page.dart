@@ -5,8 +5,10 @@ import 'package:my_garderob/pages/entry_pages/entrance_page.dart';
 import 'package:my_garderob/pages/room_page.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
-
+import '../../functions/photo_page_dop.dart';
+import '../../functions/server_api.dart';
 
 class EntryLoadingPage extends StatefulWidget {
   const EntryLoadingPage({super.key});
@@ -46,6 +48,8 @@ class _EntryLoadingPageState extends State<EntryLoadingPage> {
           );
         } else {
           WidgetsBinding.instance.addPostFrameCallback((_) {
+            checkCorrectServer();
+
             Navigator.of(context).push(PageTransition(
                 child: RoomPage(),
                 type: PageTransitionType.fade,
@@ -54,19 +58,34 @@ class _EntryLoadingPageState extends State<EntryLoadingPage> {
           return Scaffold(
             backgroundColor: GarderobColors.background,
           );
-          return Text(snapshot.data!);
         }
       },
     );
   }
-}
 
-Future<String?> _getData() async {
-  await Future.delayed(Duration(milliseconds: 300));
-  final prefs = await SharedPreferences.getInstance();
-  var text = await prefs.getString("text");
-  if (text == null) {
-    throw "";
+  Future<bool> checkCorrectServer() async {
+    final textToken = await _getData();
+    var headers = {
+      'Authorization': '${textToken!}'
+    };
+    var request = http.MultipartRequest('POST', Uri.parse(Request.login));
+    request.headers.addAll(headers);
+    http.StreamedResponse response = await request.send();
+    print("Состояние сервера: ${response.statusCode}");
+
+    if (response.statusCode == 200) {
+      return true;
+    }
+    return false;
   }
-  return text;
+
+  Future<String?> _getData() async {
+    await Future.delayed(Duration(milliseconds: 300));
+    final prefs = await SharedPreferences.getInstance();
+    var text = await prefs.getString("text");
+    if (text == null) {
+      throw "";
+    }
+    return text;
+  }
 }

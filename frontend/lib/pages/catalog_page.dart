@@ -1,12 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_garderob/colors/garderob_colors.dart';
-import 'package:my_garderob/functions/bloc.dart';
+import 'package:my_garderob/functions/photo_page_dop.dart';
 import 'package:my_garderob/resources/clothersfolders.dart';
 
 class CatalogPage extends StatelessWidget {
-  final CatalogState bodyPart;
-
+  final String bodyPart;
   const CatalogPage({super.key, required this.bodyPart});
 
   @override
@@ -38,17 +37,17 @@ class CatalogContent extends StatelessWidget {
   final bodyPart;
 
   const CatalogContent({super.key, this.bodyPart});
-
+//Пор
   @override
   Widget build(BuildContext context) {
     switch (bodyPart) {
-      case CatalogState.head:
+      case "Head":
         return BodyPart(bodypart: AddedClother.head);
-      case CatalogState.torso:
+      case "Torso":
         return BodyPart(bodypart: AddedClother.torso);
-      case CatalogState.legs:
+      case "Legs":
         return BodyPart(bodypart: AddedClother.legs);
-      case CatalogState.feet:
+      case "Feet":
         return BodyPart(bodypart: AddedClother.feet);
       default:
         return Center(

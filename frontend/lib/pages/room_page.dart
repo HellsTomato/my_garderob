@@ -7,9 +7,9 @@ import 'package:my_garderob/pages/catalog_page.dart';
 import 'package:my_garderob/pages/entry_pages/entrance_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../functions/bloc.dart';
+import '../functions/photo_page_dop.dart';
 import '../resources/image_clother.dart';
-import 'camera_page.dart';
+import 'create_photo/camera_page.dart';
 
 class RoomPage extends StatefulWidget {
   const RoomPage({super.key});
@@ -45,28 +45,28 @@ class _ImageRoomPageState extends State<RoomPage> {
                           height: 100.0,
                           ImagePath: ImageClother.iconHat,
                           onTap: () =>
-                              _teleportToCatalogPage(CatalogState.head),
+                              _teleportToCatalogPage("Head"),
                           addWidget: AddWidget(bodyPart: "Head"),
                         ),
                         IconWidget(
                           height: 200.0,
                           ImagePath: ImageClother.iconPolo,
                           onTap: () =>
-                              _teleportToCatalogPage(CatalogState.torso),
+                              _teleportToCatalogPage("Torso"),
                           addWidget: AddWidget(bodyPart: "Torso"),
                         ),
                         IconWidget(
                           height: 250.0,
                           ImagePath: ImageClother.iconPants,
                           onTap: () =>
-                              _teleportToCatalogPage(CatalogState.legs),
+                              _teleportToCatalogPage("Legs"),
                           addWidget: AddWidget(bodyPart: "Legs"),
                         ),
                         IconWidget(
                           height: 100.0,
                           ImagePath: ImageClother.iconShoose,
                           onTap: () =>
-                              _teleportToCatalogPage(CatalogState.feet),
+                              _teleportToCatalogPage("Feet"),
                           addWidget: AddWidget(bodyPart: "Feet"),
                         ),
                       ],

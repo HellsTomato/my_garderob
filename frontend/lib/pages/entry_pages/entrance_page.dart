@@ -2,12 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:my_garderob/colors/garderob_colors.dart';
-import 'package:my_garderob/functions/bloc.dart';
+import 'package:my_garderob/functions/photo_page_dop.dart';
 import 'package:my_garderob/pages/entry_pages/registration_page.dart';
 import 'package:my_garderob/pages/room_page.dart';
 import 'package:http/http.dart' as http;
+import 'package:my_garderob/resources/image_clother.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../functions/server_api.dart';
 
 //Переменные для оторажения ошибок полей
 var emailError = false;
@@ -70,7 +73,7 @@ class _EntrancePageState extends State<EntrancePage> {
                         errors["404"] = true;
                       });
                     } else {
-                      _saveUsernameToken(snapshot.data!);
+                      _saveUsernameToken(snapshot.data!.toString());
                       Navigator.of(context).push(PageTransition(
                           child: RoomPage(),
                           type: PageTransitionType.fade,
@@ -145,9 +148,9 @@ class _EntrancePageState extends State<EntrancePage> {
 
                           //Иконка одежды (фиксирована)
                           Image.asset(
-                            "assets/icons/startClother.png",
-                            height: 97,
-                            width: 74,
+                            ImageClother.clotherStopka,
+                            height: 110,
+
                           ),
                           SizedBox(height: 32),
                         ],
@@ -242,12 +245,11 @@ class _EntrancePageState extends State<EntrancePage> {
     var request = http.MultipartRequest('POST', Uri.parse(Request.login));
     request.fields.addAll({'username': "$email", 'password': "$password"});
     http.StreamedResponse response = await request.send();
-    if (response.statusCode == 200) {
-      print("Состояние сервера: ${response.statusCode}");
+    print("Состояние сервера: ${response.statusCode}");
 
+    if (response.statusCode == 200) {
       return await response.stream.bytesToString();
     } else if (response.statusCode == 404) {
-      print("Состояние сервера: ${response.statusCode}");
       setState(() {
         errors["404"] = true;
       });
@@ -257,7 +259,8 @@ class _EntrancePageState extends State<EntrancePage> {
 
   Future _saveUsernameToken(text) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString("text", "$text");
+    final textToSave = (text.substring(10, (text.length - 2)));
+    await prefs.setString("text", "$textToSave");
   }
 }
 

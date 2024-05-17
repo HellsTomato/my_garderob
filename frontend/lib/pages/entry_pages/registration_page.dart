@@ -2,11 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:my_garderob/colors/garderob_colors.dart';
-import 'package:my_garderob/functions/bloc.dart';
+import 'package:my_garderob/functions/photo_page_dop.dart';
 import 'package:my_garderob/pages/room_page.dart';
+import 'package:my_garderob/resources/image_clother.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+
+import '../../functions/server_api.dart';
 
 //Переменные для оторажения ошибок полей
 var emailError = false;
@@ -59,7 +62,7 @@ class _MainPageState extends State<RegistrationPage> {
                       alignment: Alignment.center,
                       child: CircularProgressIndicator()));
             } else {
-              _saveUsernameToken(snapshot.data!);
+              _saveUsernameToken(snapshot.data!.toString());
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 Navigator.of(context).push(PageTransition(
                     child: RoomPage(),
@@ -103,7 +106,6 @@ class _MainPageState extends State<RegistrationPage> {
                       const SizedBox(height: 23),
                       PasswordWidget(text: "Password"),
                       const SizedBox(height: 17),
-//Подпись для забывчивых – сделать когда будет готово API
 
                       const SizedBox(
                         height: 68.09,
@@ -111,9 +113,8 @@ class _MainPageState extends State<RegistrationPage> {
 
 //Иконка одежды (фиксирована)
                       Image.asset(
-                        "assets/icons/startClother.png",
-                        height: 97,
-                        width: 74,
+                        ImageClother.clotherStopka,
+                        height: 110,
                       ),
                       SizedBox(height: 32),
                     ],
@@ -150,9 +151,11 @@ class _MainPageState extends State<RegistrationPage> {
     }
   }
 
-  Future _saveUsernameToken(text) async {
+  Future _saveUsernameToken(String text) async {
+
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString("text", "$text");
+    final textToSave = (text.substring(10, (text.length - 2)));
+    await prefs.setString("text", "$textToSave");
   }
 
   void _OnPressed() {
