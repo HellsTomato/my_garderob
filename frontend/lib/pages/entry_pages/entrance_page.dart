@@ -245,7 +245,6 @@ class _EntrancePageState extends State<EntrancePage> {
     var request = http.MultipartRequest('POST', Uri.parse(Request.login));
     request.fields.addAll({'username': "$email", 'password': "$password"});
     http.StreamedResponse response = await request.send();
-    print("Состояние сервера: ${response.statusCode}");
 
     if (response.statusCode == 200) {
       return await response.stream.bytesToString();

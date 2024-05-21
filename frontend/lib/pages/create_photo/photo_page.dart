@@ -15,7 +15,6 @@ import 'package:my_garderob/resources/clothersfolders.dart';
 import 'package:my_garderob/widgets/back_buttom.dart';
 
 import '../../functions/photo_page_dop.dart';
-import '../room_page.dart';
 import 'loading_page.dart';
 
 //то что показывается и отправляются на сервер

@@ -1,14 +1,17 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:my_garderob/bloc/photo_bloc.dart';
 import 'package:my_garderob/colors/garderob_colors.dart';
 import 'package:my_garderob/pages/catalog_page.dart';
 import 'package:my_garderob/pages/entry_pages/entrance_page.dart';
+import 'package:my_garderob/resources/clothersfolders.dart';
+import 'package:my_garderob/resources/image_clother.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../functions/photo_page_dop.dart';
-import '../resources/image_clother.dart';
+import 'package:http/http.dart' as http;
+import 'package:my_garderob/bloc/photo_bloc.dart';
 import 'create_photo/camera_page.dart';
 
 class RoomPage extends StatefulWidget {
@@ -24,8 +27,9 @@ class _ImageRoomPageState extends State<RoomPage> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
-//Не пускает пользователя в поле регистрации
+    var addedClotherFormServer = _serverRequest();
     return WillPopScope(
         onWillPop: () async {
           return false;
@@ -37,57 +41,269 @@ class _ImageRoomPageState extends State<RoomPage> {
               children: [
                 Center(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        IconWidget(
-                          height: 100.0,
-                          ImagePath: ImageClother.iconHat,
-                          onTap: () =>
-                              _teleportToCatalogPage("Head"),
-                          addWidget: AddWidget(bodyPart: "Head"),
-                        ),
-                        IconWidget(
-                          height: 200.0,
-                          ImagePath: ImageClother.iconPolo,
-                          onTap: () =>
-                              _teleportToCatalogPage("Torso"),
-                          addWidget: AddWidget(bodyPart: "Torso"),
-                        ),
-                        IconWidget(
-                          height: 250.0,
-                          ImagePath: ImageClother.iconPants,
-                          onTap: () =>
-                              _teleportToCatalogPage("Legs"),
-                          addWidget: AddWidget(bodyPart: "Legs"),
-                        ),
-                        IconWidget(
-                          height: 100.0,
-                          ImagePath: ImageClother.iconShoose,
-                          onTap: () =>
-                              _teleportToCatalogPage("Feet"),
-                          addWidget: AddWidget(bodyPart: "Feet"),
-                        ),
-                      ],
-                    ),
-                  ),
+                      padding: EdgeInsets.symmetric(horizontal: 40),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          PhotoWidgetContent(
+                              height: 60.0,
+                              bodyPart: BodyPartName.head,
+                              onTap: () {
+                                _teleportToCatalogPage(
+                                    BodyPartName.head, addedClotherFormServer);
+                              }),
+                          PhotoWidgetContent(
+                              height: 180.0,
+                              bodyPart: BodyPartName.torso,
+                              onTap: () {
+                                _teleportToCatalogPage(
+                                    BodyPartName.torso, addedClotherFormServer);
+                              }),
+                          PhotoWidgetContent(
+                              height: 280.0,
+                              bodyPart: BodyPartName.legs,
+                              onTap: () {
+                                _teleportToCatalogPage(
+                                    BodyPartName.legs, addedClotherFormServer);
+                              }),
+                          PhotoWidgetContent(
+                              height: 50.0,
+                              bodyPart: BodyPartName.feet,
+                              onTap: () {
+                                _teleportToCatalogPage(
+                                    BodyPartName.feet, addedClotherFormServer);
+                              }),
+                        ],
+                      )),
                 ),
                 //TODO убрать
                 Align(
                   alignment: Alignment.topLeft,
                   child: DeleteButtom(),
-                )
+                ),
               ],
             ),
           ),
         ));
   }
 
-  void _teleportToCatalogPage(final bodyPart) {
+  void _teleportToCatalogPage(final bodyPart, final addedClother) {
     Navigator.of((context)).push(MaterialPageRoute(
         builder: (context) => CatalogPage(
               bodyPart: bodyPart,
+              addedClother: addedClother,
+            )));
+  }
+
+  Future<Map> convertToCatalog(fList) async {
+    final list = await fList;
+    var id = [];
+    var name = [];
+    var image = [];
+    var typeClothes = [];
+    var season = [];
+    var colors = [];
+    for (var i in list) {
+      id.add(i["id"]);
+      name.add(i["name"]);
+      image.add(i["image"]);
+      typeClothes.add(i["type_clothes"]);
+      season.add(i["season"]);
+      colors.add(i["colors"]);
+    }
+    var result = {
+      "id": id,
+      "name": name,
+      "image": image,
+      "typeClothes": typeClothes,
+      "season": season,
+      "colors": colors
+    };
+    return result;
+  }
+
+  Future<Map> _serverRequest() async {
+    final prefs = await SharedPreferences.getInstance();
+    var token = await prefs.getString("text");
+    var headers = {
+      'Authorization': 'Token $token',
+      'Connection': 'keep-alive',
+      'Accept-Encoding': 'gzip, deflate, br'
+    };
+    var request = http.MultipartRequest(
+        'GET', Uri.parse('http://6efba428f094.hosting.myjino.ru//clothes/'));
+
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      var result = await response.stream.bytesToString();
+
+      List<dynamic> list = json.decode(result);
+      return await convertToCatalog(list);
+    } else if (response.statusCode == 400 ||
+        response.statusCode == 404 ||
+        response.statusCode == 401) {
+      throw "Error";
+    } else {
+      return {};
+    }
+  }
+}
+
+class PhotoWidgetContent extends StatelessWidget {
+  final String bodyPart;
+  final height;
+  final VoidCallback onTap;
+
+  const PhotoWidgetContent(
+      {super.key,
+      required this.height,
+      required this.bodyPart,
+      required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    switch (bodyPart) {
+      case BodyPartName.head:
+        return StreamBuilder(
+            stream: SavePhotoToRoom.headController,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              }
+              if (snapshot.data! == '') {
+                return IconWidget(
+                  onTap: onTap,
+                  height: 60.0,
+                  iconPath: ImageClother.iconCap,
+                  bodyPart: bodyPart,
+                );
+              } else {
+                return ImageWidget(
+                  ImagePath: snapshot.data!,
+                  height: 100.0,
+                  bodyPart: bodyPart,
+                );
+              }
+            });
+
+      case BodyPartName.torso:
+        return StreamBuilder(
+            stream: SavePhotoToRoom.torsoController,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              }
+
+              if (snapshot.data! == '') {
+                return IconWidget(
+                  onTap: onTap,
+                  height: 180.0,
+                  iconPath: ImageClother.iconTshirt,
+                  bodyPart: bodyPart,
+                );
+              } else {
+                return ImageWidget(
+                  ImagePath: snapshot.data!,
+                  height: height,
+                  bodyPart: bodyPart,
+                );
+              }
+            });
+      case BodyPartName.legs:
+        return StreamBuilder(
+            stream: SavePhotoToRoom.legsController,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              }
+
+              if (snapshot.data! == '') {
+                return IconWidget(
+                  onTap: onTap,
+                  height: 280.0,
+                  iconPath: ImageClother.iconShtany,
+                  bodyPart: bodyPart,
+                );
+              } else {
+                return ImageWidget(
+                  ImagePath: snapshot.data!,
+                  height: height,
+                  bodyPart: bodyPart,
+                );
+              }
+            });
+      case BodyPartName.feet:
+        return StreamBuilder(
+            stream: SavePhotoToRoom.feetController,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              }
+
+              if (snapshot.data! == '') {
+                return IconWidget(
+                  onTap: onTap,
+                  height: 50.0,
+                  iconPath: ImageClother.iconKrosy,
+                  bodyPart: bodyPart,
+                );
+              } else {
+                return ImageWidget(
+                  ImagePath: snapshot.data!,
+                  height: 90.0,
+                  bodyPart: bodyPart,
+                );
+              }
+            });
+    }
+    return const Placeholder();
+  }
+}
+
+class IconWidget extends StatelessWidget {
+  final iconPath;
+  final bodyPart;
+
+  const IconWidget({
+    super.key,
+    required this.onTap,
+    required this.height,
+    required this.iconPath,
+    required this.bodyPart,
+  });
+
+  final VoidCallback onTap;
+  final height;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+        onTap: onTap,
+        child: Container(
+            height: height,
+            child: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: Image.asset(
+                    iconPath,
+                    fit: BoxFit.fitHeight,
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: AddWidget(
+                    onTap: () {
+                      Navigator.of((context)).push(MaterialPageRoute(
+                          builder: (context) => CameraMen(bodyPart: bodyPart)));
+                    },
+                    delete: false,
+                  ),
+                )
+              ],
             )));
   }
 }
@@ -117,91 +333,78 @@ class DeleteButtom extends StatelessWidget {
   }
 }
 
-class IconWidget extends StatelessWidget {
+class ImageWidget extends StatelessWidget {
+  final bodyPart;
   final height;
   final String ImagePath;
-  final VoidCallback onTap;
-  final Widget addWidget;
 
-  const IconWidget(
+  const ImageWidget(
       {super.key,
-      required this.height,
+      this.height,
       required this.ImagePath,
-      required this.onTap,
-      required this.addWidget});
+      required this.bodyPart});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-          height: height,
-          width: double.infinity,
-          padding: EdgeInsets.all(2),
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.black, width: 1),
-              borderRadius: BorderRadius.circular(10)),
-          child: Stack(
-            children: [
-              Align(alignment: Alignment.center, child: Image.asset(ImagePath)),
-              Align(alignment: Alignment.topRight, child: addWidget)
-            ],
-          )),
-    );
+    return Container(
+        height: height,
+        // padding: EdgeInsets.all(2),
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.center,
+              child: Image.network(ImagePath, fit: BoxFit.fitHeight),
+            ),
+            Align(
+              alignment: Alignment.topRight,
+              child: AddWidget(
+                onTap: () {
+                  deletePhotoClother(bodyPart);
+                },
+                delete: true,
+              ),
+            )
+          ],
+        ));
+  }
+
+  void deletePhotoClother(bodyPart) {
+    switch (bodyPart) {
+      case BodyPartName.head:
+        SavePhotoToRoom.headController.add("");
+      case BodyPartName.torso:
+        SavePhotoToRoom.torsoController.add('');
+      case BodyPartName.legs:
+        SavePhotoToRoom.legsController.add('');
+      case BodyPartName.feet:
+        SavePhotoToRoom.feetController.add('');
+    }
   }
 }
 
 class AddWidget extends StatelessWidget {
+  final bool delete;
+
   const AddWidget({
     super.key,
-    required this.bodyPart,
+    required this.onTap,
+    required this.delete,
   });
 
-  final String bodyPart;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => Navigator.of((context)).push(MaterialPageRoute(
-          builder: (context) => CameraMen(bodyPart: bodyPart))),
-      child: Container(
-        height: 45,
-        width: 45,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.black, width: 2)),
-        child: Icon(Icons.add, size: 40),
-      ),
-    );
-  }
-}
-
-class ImageContainer extends StatelessWidget {
-  final height;
-  final String ImagePath;
   final VoidCallback onTap;
-
-  const ImageContainer(
-      {super.key, this.height, required this.ImagePath, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-          height: height,
-          width: double.infinity,
-          padding: EdgeInsets.all(2),
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.black, width: 1),
-              borderRadius: BorderRadius.circular(10)),
-          child: Stack(
-            children: [
-              Align(
-                  alignment: Alignment.center,
-                  child: Image.file(File(ImagePath))),
-            ],
-          )),
+        height: 35,
+        width: 35,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.black, width: 2)),
+        child: Icon(delete ? Icons.clear : Icons.add, size: 30),
+      ),
     );
   }
 }

@@ -35,20 +35,20 @@ class _CameraMenState extends State<CameraMen> {
     double ratioY = 1.0;
     switch (bodyPart) {
       case "Head":
-        ratioX = 1.5;
+        ratioX = 1;
         ratioY = 1;
         break;
       case "Torso":
-        ratioX = 2;
+        ratioX = 1;
         ratioY = 1;
         break;
       case "Legs":
         ratioX = 1;
-        ratioY = 2;
+        ratioY = 1;
         // ratioY = 2.5;
         break;
       case "Feet":
-        ratioX = 1.5;
+        ratioX = 1;
         ratioY = 1;
         break;
     }
@@ -101,16 +101,16 @@ class _CameraMenState extends State<CameraMen> {
                   },
                   text: "Galery",
                 ),
-                ButtomChoose(
-                  onTap: () {
-                    Navigator.of((context)).push(MaterialPageRoute(
-                        builder: (context) => PhotoPage(
-                          imageFile: File('assets/test_image/Bucket-hat.png'),
-                          bodyPart: bodyPart,
-                        )));
-                  },
-                  text: "Scip",
-                ),
+                // ButtomChoose(
+                //   onTap: () {
+                //     Navigator.of((context)).push(MaterialPageRoute(
+                //         builder: (context) => PhotoPage(
+                //           imageFile: File('assets/test_image/Bucket-hat.png'),
+                //           bodyPart: bodyPart,
+                //         )));
+                //   },
+                //   text: "Scip",
+                // ),
               ],
             ),
           ),

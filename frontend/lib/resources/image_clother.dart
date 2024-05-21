@@ -10,4 +10,10 @@ class ImageClother {
   static const String iconPolo = "assets/icons/polo.png";
   static const String iconShoose = "assets/icons/shoose.png";
   static const String clotherStopka = "assets/icons/clotherStopka.png";
+  static const String iconCap = "assets/icons/cap.png";
+  static const String iconTshirt = "assets/icons/maika.png";
+  static const String iconShtany = "assets/icons/shtany.png";
+  static const String iconKrosy = "assets/icons/krosy.png";
+  static const String iconHello = "assets/icons/hello.png";
+
 }
