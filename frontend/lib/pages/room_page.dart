@@ -318,11 +318,14 @@ class DeleteButtom extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        print("Delete");
         final prefs = await SharedPreferences.getInstance();
         await prefs.remove('text');
         Navigator.of(context)
             .push(MaterialPageRoute(builder: (context) => EntrancePage()));
+        SavePhotoToRoom.headController.add('');
+        SavePhotoToRoom.torsoController.add('');
+        SavePhotoToRoom.legsController.add('');
+        SavePhotoToRoom.feetController.add('');
       },
       child: Container(
         height: 30,
