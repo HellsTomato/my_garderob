@@ -4,6 +4,7 @@ import 'package:my_garderob/colors/garderob_colors.dart';
 import 'package:my_garderob/functions/photo_page_dop.dart';
 import 'package:my_garderob/pages/product_page.dart';
 import 'package:my_garderob/resources/clothersfolders.dart';
+import 'package:my_garderob/widgets/back_buttom.dart';
 
 class CatalogPage extends StatelessWidget {
   final String bodyPart;
@@ -22,9 +23,14 @@ class CatalogPage extends StatelessWidget {
           children: [
             Align(
               alignment: Alignment.topCenter,
-              child: Text(
-                'Choose your look:',
-                style: TextStyle(fontSize: 40, fontWeight: FontWeight.w800),
+              child: Column(
+                children: [
+                  SizedBox(height: 10),
+                  Text(
+                    'Choose your look:',
+                    style: TextStyle(fontSize: 40, fontWeight: FontWeight.w800),
+                  ),
+                ],
               ),
             ),
             Padding(
@@ -54,7 +60,7 @@ class CatalogPage extends StatelessWidget {
                 alignment: Alignment.topLeft,
                 child: Padding(
                   padding: EdgeInsets.only(top: 7),
-                  child: BackButton(),
+                  child: BackActionButtom(onTap: (){Navigator.pop(context);},),
                 )),
           ],
         ),
