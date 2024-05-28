@@ -43,7 +43,7 @@ class _ImageRoomPageState extends State<RoomPage> {
                   child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 40),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           PhotoWidgetContent(
                               height: 60.0,
@@ -109,7 +109,7 @@ class _ImageRoomPageState extends State<RoomPage> {
       image.add(i["image"]);
       typeClothes.add(i["type_clothes"]);
       season.add(i["season"]);
-      colors.add(i["colors"]);
+      colors.add(i["colors"][0]);
     }
     var result = {
       "id": id,
@@ -283,6 +283,7 @@ class IconWidget extends StatelessWidget {
     return GestureDetector(
         onTap: onTap,
         child: Container(
+          margin: EdgeInsets.symmetric(vertical: 22.0),
             height: height,
             child: Stack(
               children: [
@@ -405,8 +406,8 @@ class AddWidget extends StatelessWidget {
         width: 35,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.black, width: 2)),
-        child: Icon(delete ? Icons.clear : Icons.add, size: 30),
+            border: Border.all(color: GarderobColors.lines, width: 2)),
+        child: Icon(delete ? Icons.clear : Icons.add, size: 30, color: GarderobColors.lines,),
       ),
     );
   }

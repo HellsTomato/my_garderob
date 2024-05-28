@@ -74,6 +74,7 @@ class _EntrancePageState extends State<EntrancePage> {
                       });
                     } else {
                       _saveUsernameToken(snapshot.data!.toString());
+                      serverRequest = false;
                       Navigator.of(context).push(PageTransition(
                           child: RoomPage(),
                           type: PageTransitionType.fade,
@@ -150,7 +151,6 @@ class _EntrancePageState extends State<EntrancePage> {
                           Image.asset(
                             ImageClother.clotherStopka,
                             height: 110,
-
                           ),
                           SizedBox(height: 32),
                         ],
@@ -198,6 +198,7 @@ class _EntrancePageState extends State<EntrancePage> {
                               ),
                               GestureDetector(
                                 onTap: () {
+                                  serverRequest = false;
                                   Navigator.of((context)).push(
                                       MaterialPageRoute(
                                           builder: (context) =>

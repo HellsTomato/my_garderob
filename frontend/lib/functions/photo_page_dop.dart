@@ -94,6 +94,22 @@ class DropDownMenues {
             child: Text(value),
           ))
       .toList();
+
+
+  static const filterDropDownList = [
+    DropdownMenuItem(
+      child: Text("Type"),
+      value: "typeClothes",
+    ),
+    DropdownMenuItem(
+      child: Text("Color"),
+      value: "colors",
+    ),
+    DropdownMenuItem(
+      child: Text("Season"),
+      value: "season",
+    ),
+  ];
 }
 
 class IdServer {
@@ -104,6 +120,8 @@ class IdServer {
     "Autumn": 4,
     "Multi": 5,
   };
+
+  static const seasonReverse = {1: "Winter", 2: "Spring", 3: "Summer", 4: "Autumn", 5: "Multi"};
   static const color = {
     "White": 1,
     "Black": 2,
@@ -116,4 +134,7 @@ class IdServer {
     "Multi": 9,
     "Brown": 10,
   };
+  static const colorReverse = {1: "White", 2: "Black", 3: "Red", 4: "Yellow", 5: "Green", 6: "Blue", 7: "Orange", 8: "Purple", 9: "Multi", 10: "Brown"};
+
+
 }

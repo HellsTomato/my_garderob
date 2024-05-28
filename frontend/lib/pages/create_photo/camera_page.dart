@@ -101,16 +101,16 @@ class _CameraMenState extends State<CameraMen> {
                   },
                   text: "Galery",
                 ),
-                // ButtomChoose(
-                //   onTap: () {
-                //     Navigator.of((context)).push(MaterialPageRoute(
-                //         builder: (context) => PhotoPage(
-                //           imageFile: File('assets/test_image/Bucket-hat.png'),
-                //           bodyPart: bodyPart,
-                //         )));
-                //   },
-                //   text: "Scip",
-                // ),
+                ButtomChoose(
+                  onTap: () {
+                    Navigator.of((context)).push(MaterialPageRoute(
+                        builder: (context) => PhotoPage(
+                          imageFile: File('assets/test_image/Bucket-hat.png'),
+                          bodyPart: bodyPart,
+                        )));
+                  },
+                  text: "Scip",
+                ),
               ],
             ),
           ),
